@@ -1,0 +1,18 @@
+{
+  "name": "chat_luis",
+  "version": "1.0.0",
+  "description": "Es una aplicacion de chat",
+  "main": "server.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "author": "Luis Torres Carpio",
+  "license": "ISC",
+  "dependencies": {
+    "express": "4.12.3",
+    "nodemon": "1.3.7",
+    "socket.io": "1.2.1",
+    "consolidate": "0.8.0",
+    "jade": "0.28.1"
+  }
+}

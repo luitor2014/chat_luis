@@ -1,0 +1,97 @@
+doctype html
+html
+	head(lang='en')
+		meta(charset='UTF-8')
+		title Node Socket
+		meta(name='viewport', content='width=device-width, initial-scale=1')
+		script(src='/socket.io/socket.io.js')
+		script(src='js/jquery-1.9.1.js')
+		style
+			body{
+				background-color:#E3E3E3;
+			}
+			#caja_all{
+				width:220px;
+				height:100px;
+				background-color:white;
+				text-align:left;
+				overflow-y:scroll;
+			}
+	body
+		div(align="center",style="background-color:#D9D9D9;width:100%;")
+			h2(align="center") LuitorSlide - Chat
+			div#you_user_name(align="center")
+			div Usuarios: 
+				span#user_list 
+			input#user_name(type='text', onkeyup="if(event.keyCode == 13) {conectar(this.value);$('#user_name').hide();$('#texto1').focus();}", placeholder="tu nikname y enter");
+			br
+			div#caja_all
+				div#caja
+			div#cuadro_texto(style="display:none;")
+				input#texto1(type='text',placeholder="mensaje", onkeyup="if(event.keyCode == 13) enviar();");
+				button(onclick='enviar();') Enviar
+			br
+			div(style="color:#977708;font-size:13px;") Autor: Luis Torres Carpio
+		script
+
+			var websocket = io();
+			$(document).on("ready", iniciar);
+
+			//- INTERACCION DE SERVIDOR A LOCAL
+			function iniciar(){
+				websocket.on( "message_res", message_res );
+				websocket.on( "usuarios_res", usuarios_res );
+				websocket.on( "ver_todo_user_res", ver_todo_user_res );
+
+			}
+			function usuarios_res(dt){
+				if( dt.action == "add" ){
+					$("#user_list").append("<span id='user_"+dt.id_user+"' style='color:green;'>"+dt.nombre+", <span>");
+				}else if( dt.action == "delete" ){
+					$("#user_"+dt.id_user).remove();
+					//- if(dt.nombre)
+						//- alert("El usuario "+dt.nombre+" Se desconecto");
+				}
+			}
+			//para cuando alguien recien entra refrescarlo
+			function ver_todo_user_res(dt){
+				if( dt.action == "add" ){
+					$("#user_list").append("<span id='user_"+dt.id_user+"' style='color:green;'>"+dt.nombre+", <span>");
+				}else if( dt.action == "delete" ){
+					$("#user_"+dt.id_user).remove();
+					//- if(dt.nombre)
+						//- alert("El usuario "+dt.nombre+" Se desconecto");
+				}
+			}
+			function message_res(dt){
+
+				dtHTML = "<div>"+dt.nickname +": "+dt.text+"</div>";
+				
+				var alto = $("#caja").height();
+				$("#caja_all").animate({"scrollTop": alto});
+
+				$("#user_"+dt.id_user).css({'color':'blue'});
+				setTimeout(function(){
+					$("#user_"+dt.id_user).css({'color':'green'});
+					},1000);
+
+				$("#caja").append(dtHTML);
+			}
+			function enviar(){
+				var msn = $("#texto1").val();
+
+				dtHTML = "<div>"+"Me: "+msn+"</div>";
+
+				var alto = $("#caja").height();
+				$("#caja_all").animate({"scrollTop": alto});
+
+				$("#caja").append(dtHTML);
+				websocket.emit("message_req", {text: msn} );
+				$("#texto1").select();
+			}
+			function conectar(nick){
+				$("#user_list").html(""); 
+				websocket.emit("nickname", {nickname: nick})
+				$("#you_user_name").html("<span style='font-size:19px;font-weight:bold;'>You: <span style='color:blue;'>"+nick+"</span></span>");
+				$("#cuadro_texto").show();
+			}
