@@ -7,7 +7,7 @@ var path = require('path');
 var cons= require('consolidate');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var PORT = process.env.PORT || 1560;
+var PORT = process.env.PORT;
 app.engine('.jade',cons.jade);
 app.set('view engine', 'jade');
 app.use(express.static(path.join(__dirname, 'public')));
