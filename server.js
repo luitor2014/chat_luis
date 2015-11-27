@@ -27,13 +27,13 @@ io.on('connection',function(socket){
     var room = io.sockets.connected;
     
     //fin del vemos si existen
-
+    
     // console.log("server: "+io.sockets.connected[0]);
     console.log("conect: "+socket.id);
     // console.log(io.sockets.server.eio.clientsCount);
     socket.on('message_req', function(dt){
-
-        socket.broadcast.emit("message_res", {nickname: usuario[socket.id], text: dt.text, id_user: socket.id});
+        
+        socket.broadcast.emit("message_res", {nickname: usuario[socket.id], text: dt.text+" :port heroku: "+PORT, id_user: socket.id});
         // console.log(socket.id);
         // io.sockets.emit('saludo_res','hola');
         console.log(dt.text);
